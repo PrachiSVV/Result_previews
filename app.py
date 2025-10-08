@@ -187,14 +187,13 @@ with st.sidebar:
     # Clear filters button
     if st.button("🧹 Clear All Filters"):
         for k in list(st.session_state.keys()):
-            if k.startswith("flt_") or k in ("sort_field", "sort_asc", "page", "rows"):
+            if k.startswith("flt_") or k in ("sort_field", "sort_asc"):
                 del st.session_state[k]
         st.session_state["flt_regex"] = DEFAULT_REGEX
         st.session_state["sort_field"] = "_id"
         st.session_state["sort_asc"] = True
-        st.session_state["page"] = 1
-        st.session_state["rows"] = 100
         st.rerun()
+
 
     # Regex on _id (server query)
     flt_regex = st.text_input("Regex on _id", value=st.session_state.get("flt_regex", DEFAULT_REGEX), key="flt_regex")
