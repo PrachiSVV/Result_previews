@@ -87,7 +87,7 @@ def to_float(x: Any) -> Optional[float]:
         return None
 def flatten_for_df(doc: Dict[str, Any]) -> Dict[str, Any]:
     company = doc.get("company") or ""
-    smap = doc.get("symbol_map_raw") or {}
+    smap = doc.get("symbolmap") or {}
     return {
         "_id": doc.get("_id"),
         "broker_name": doc.get("broker_name"),
