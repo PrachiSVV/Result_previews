@@ -119,8 +119,39 @@ def col_range(df: pd.DataFrame, col: str) -> Tuple[float, float]:
     if s.empty:
         return (0.0, 0.0)
     return float(s.min()), float(s.max())
-
 def apply_filters(df: pd.DataFrame, f: Dict[str, Any]) -> pd.DataFrame:
+    out = df.copy()
+
+    # Text/regex
+    if f["company_contains"]:
+        out = out[out["company_name"].fillna("").str.contains(f["company_contains"], case=False, na=False)]
+    if f["nse_contains"]:
+        out = out[out["nse"].fillna("").str.contains(f["nse_contains"], case=False, na=False)]
+
+    # Categorical
+    if f["broker"]:
+        out = out[out["broker_name"].isin(f["broker"])]
+    if f["period"]:
+        out = out[out["report_period"].isin(f["period"])]
+    if f["basis"]:
+        out = out[out["basis"].isin(f["basis"])]
+
+    # Numeric ranges — keep NaNs (pass-through)
+    num_cols = [
+        "sales_yoy_pct", "ebitda_yoy_pct", "pat_yoy_pct",
+        "ebitda_margin_percent", "pat_margin_percent",
+        "expected_sales", "expected_ebitda", "expected_pat"
+    ]
+    for key in num_cols:
+        lo, hi = f[key]
+        s = pd.to_numeric(out[key], errors="coerce")
+        mask = s.between(lo, hi) | s.isna()   # <= THIS keeps rows with NaN
+        out = out[mask]
+
+    return out
+
+
+def apply_filters_old(df: pd.DataFrame, f: Dict[str, Any]) -> pd.DataFrame:
     out = df.copy()
 
     # Text/regex
