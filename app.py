@@ -262,6 +262,7 @@ df_filtered = apply_filters(df_all, filters)
 df_sorted = sort_df(df_filtered, sort_field, sort_asc)
 
 # ====== Top toolbar ======
+# ====== Top toolbar ======
 tcol1, tcol2, tcol3, tcol4 = st.columns([2, 1, 1, 2])
 with tcol1:
     st.subheader("📊 MOFSL Research Browser")
@@ -277,6 +278,7 @@ with tcol4:
 start = (page - 1) * rows
 end = start + rows
 view = df_sorted.iloc[start:end].reset_index(drop=True)
+
 
 visible_cols = [
     "_id", "broker_name", "report_period", "basis",
