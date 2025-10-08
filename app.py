@@ -262,21 +262,26 @@ df_sorted = sort_df(df_filtered, sort_field, sort_asc)
 
 # ====== Top toolbar ======
 # ====== Top toolbar ======
-tcol1, tcol2, tcol3, tcol4 = st.columns([2, 1, 1, 2])
-with tcol1:
-    st.subheader("📊 MOFSL Research Browser")
-with tcol2:
-    rows = st.number_input("Rows", min_value=10, max_value=1000, value=st.session_state.get("rows", 100), step=10, key="rows")
-with tcol3:
-    total_pages = max(1, (len(df_sorted) + rows - 1) // rows)
-    page = st.number_input("Page", min_value=1, max_value=total_pages, value=min(st.session_state.get("page", 1), total_pages), step=1, key="page")
-with tcol4:
-    st.caption(f"Loaded: {len(df_all)} • Filtered: {len(df_sorted)} • Pages: {total_pages}")
+# ====== Header ======
+st.subheader("📊 MOFSL Research Browser")
+st.caption(f"Loaded: {len(df_all)} • After filters: {len(df_sorted)}")
+
+# tcol1, tcol2, tcol3, tcol4 = st.columns([2, 1, 1, 2])
+# with tcol1:
+#     st.subheader("📊 MOFSL Research Browser")
+# with tcol2:
+#     rows = st.number_input("Rows", min_value=10, max_value=1000, value=st.session_state.get("rows", 100), step=10, key="rows")
+# with tcol3:
+#     total_pages = max(1, (len(df_sorted) + rows - 1) // rows)
+#     page = st.number_input("Page", min_value=1, max_value=total_pages, value=min(st.session_state.get("page", 1), total_pages), step=1, key="page")
+# with tcol4:
+#     st.caption(f"Loaded: {len(df_all)} • Filtered: {len(df_sorted)} • Pages: {total_pages}")
 
 # ====== Main table ======
-start = (page - 1) * rows
-end = start + rows
-view = df_sorted.iloc[start:end].reset_index(drop=True)
+view = df_sorted.reset_index(drop=True)
+# start = (page - 1) * rows
+# end = start + rows
+# view = df_sorted.iloc[start:end].reset_index(drop=True)
 
 
 visible_cols = [
