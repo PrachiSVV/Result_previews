@@ -70,11 +70,13 @@ def load_docs(regex_str: str) -> List[Dict[str, Any]]:
 # =========================
 # ====== Core Utils =======
 # =========================
+
 NUM_SORTABLE = [
     "expected_sales", "expected_ebitda", "expected_pat",
     "sales_yoy_pct", "ebitda_yoy_pct", "pat_yoy_pct",
-    "ebitda_margin_percent", "pat_margin_percent"
+    "ebitda_margin_yoy_bps", "pat_margin_yoy_bps"
 ]
+
 
 def to_float(x: Any) -> Optional[float]:
     try:
@@ -83,7 +85,6 @@ def to_float(x: Any) -> Optional[float]:
         return float(x)
     except Exception:
         return None
-
 def flatten_for_df(doc: Dict[str, Any]) -> Dict[str, Any]:
     company = doc.get("company") or {}
     smap = doc.get("symbol_map_raw") or {}
@@ -102,14 +103,52 @@ def flatten_for_df(doc: Dict[str, Any]) -> Dict[str, Any]:
         "sales_yoy_pct": to_float(doc.get("sales_yoy_pct")),
         "ebitda_yoy_pct": to_float(doc.get("ebitda_yoy_pct")),
         "pat_yoy_pct": to_float(doc.get("pat_yoy_pct")),
-        "ebitda_margin_percent": to_float(doc.get("ebitda_margin_percent")),
-        "pat_margin_percent": to_float(doc.get("pat_margin_percent")),
+        # use new BPS fields instead of margin %
+        "ebitda_margin_yoy_bps": to_float(doc.get("ebitda_margin_yoy_bps")),
+        "pat_margin_yoy_bps": to_float(doc.get("pat_margin_yoy_bps")),
         "source_file": doc.get("source_file"),
         "source_unit": doc.get("source_unit"),
     }
 
 def build_dataframe(docs: List[Dict[str, Any]]) -> pd.DataFrame:
-    return pd.DataFrame([flatten_for_df(d) for d in docs])
+    df = pd.DataFrame([flatten_for_df(d) for d in docs])
+    # drop rows where *all numeric fields* are NaN
+    numeric_cols = [
+        "expected_sales", "expected_ebitda", "expected_pat",
+        "sales_yoy_pct", "ebitda_yoy_pct", "pat_yoy_pct",
+        "ebitda_margin_yoy_bps", "pat_margin_yoy_bps"
+    ]
+    if not df.empty:
+        df = df.dropna(subset=numeric_cols, how="all")
+    return df
+
+
+# def flatten_for_df(doc: Dict[str, Any]) -> Dict[str, Any]:
+#     company = doc.get("company") or {}
+#     smap = doc.get("symbol_map_raw") or {}
+#     return {
+#         "_id": doc.get("_id"),
+#         "broker_name": doc.get("broker_name"),
+#         "report_period": doc.get("report_period"),
+#         "basis": doc.get("basis"),
+#         "company_name": company.get("name") or doc.get("company_name"),
+#         "nse": company.get("nse") or smap.get("NSE"),
+#         "bse": company.get("bse") or smap.get("BSE"),
+#         "isin": company.get("isin") or smap.get("company"),
+#         "expected_sales": to_float(doc.get("expected_sales")),
+#         "expected_ebitda": to_float(doc.get("expected_ebitda")),
+#         "expected_pat": to_float(doc.get("expected_pat")),
+#         "sales_yoy_pct": to_float(doc.get("sales_yoy_pct")),
+#         "ebitda_yoy_pct": to_float(doc.get("ebitda_yoy_pct")),
+#         "pat_yoy_pct": to_float(doc.get("pat_yoy_pct")),
+#         "ebitda_margin_percent": to_float(doc.get("ebitda_margin_percent")),
+#         "pat_margin_percent": to_float(doc.get("pat_margin_percent")),
+#         "source_file": doc.get("source_file"),
+#         "source_unit": doc.get("source_unit"),
+#     }
+
+# def build_dataframe(docs: List[Dict[str, Any]]) -> pd.DataFrame:
+#     return pd.DataFrame([flatten_for_df(d) for d in docs])
 
 def ms_options(df: pd.DataFrame, col: str) -> List[str]:
     return sorted([str(v) for v in df[col].dropna().unique().tolist()])
