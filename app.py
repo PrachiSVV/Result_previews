@@ -178,7 +178,7 @@ def apply_filters(df: pd.DataFrame, f: Dict[str, Any]) -> pd.DataFrame:
     # Numeric ranges — keep NaNs (pass-through)
     num_cols = [
         "sales_yoy_pct", "ebitda_yoy_pct", "pat_yoy_pct",
-        "ebitda_margin_percent", "pat_margin_percent",
+        "ebitda_margin_yoy_bps", "pat_margin_yoy_bps",
         "expected_sales", "expected_ebitda", "expected_pat"
     ]
     for key in num_cols:
@@ -209,7 +209,7 @@ def apply_filters_old(df: pd.DataFrame, f: Dict[str, Any]) -> pd.DataFrame:
 
     # Numeric sliders
     for key in ["sales_yoy_pct", "ebitda_yoy_pct", "pat_yoy_pct",
-                "ebitda_margin_percent", "pat_margin_percent",
+                "ebitda_margin_yoy_bps", "pat_margin_yoy_bps",
                 "expected_sales", "expected_ebitda", "expected_pat"]:
         lo, hi = f[key]
         series = pd.to_numeric(out[key], errors="coerce")
@@ -299,8 +299,9 @@ with st.sidebar:
     sales_y = slider_for("sales_yoy_pct", "Sales YoY %")
     ebitda_y = slider_for("ebitda_yoy_pct", "EBITDA YoY %")
     pat_y = slider_for("pat_yoy_pct", "PAT YoY %")
-    ebitda_mg = slider_for("ebitda_margin_percent", "EBITDA Margin %")
-    pat_mg = slider_for("pat_margin_percent", "PAT Margin %")
+    ebitda_mg = slider_for("ebitda_margin_yoy_bps", "EBITDA Margin YoY (bps)")
+    pat_mg    = slider_for("pat_margin_yoy_bps", "PAT Margin YoY (bps)")
+
     exp_sales = slider_for("expected_sales", "Sales (mn)")
     exp_ebitda = slider_for("expected_ebitda", "EBITDA (mn)")
     exp_pat = slider_for("expected_pat", "PAT (mn)")
@@ -321,8 +322,8 @@ filters = {
     "sales_yoy_pct": sales_y,
     "ebitda_yoy_pct": ebitda_y,
     "pat_yoy_pct": pat_y,
-    "ebitda_margin_percent": ebitda_mg,
-    "pat_margin_percent": pat_mg,
+    "ebitda_margin_yoy_bps": ebitda_mg,
+    "pat_margin_yoy_bps": pat_mg,
     "expected_sales": exp_sales,
     "expected_ebitda": exp_ebitda,
     "expected_pat": exp_pat,
@@ -359,7 +360,7 @@ visible_cols = [
     "company_name", "nse", "bse", "isin",
     "expected_sales", "expected_ebitda", "expected_pat",
     "sales_yoy_pct", "ebitda_yoy_pct", "pat_yoy_pct",
-    "ebitda_margin_percent", "pat_margin_percent",
+    "ebitda_margin_yoy_bps", "pat_margin_yoy_bps",
     "source_file", "source_unit",
 ]
 existing_cols = [c for c in visible_cols if c in view.columns]
@@ -401,8 +402,9 @@ if not view.empty:
                     f"{to_float(doc.get('ebitda_yoy_pct')) or 0:.2f}% YoY")
         k[2].metric("PAT (mn)", f"{to_float(doc.get('expected_pat')) or 0:,.0f}",
                     f"{to_float(doc.get('pat_yoy_pct')) or 0:.2f}% YoY")
-        k[3].metric("EBITDA Margin %", f"{to_float(doc.get('ebitda_margin_percent')) or 0:.2f}")
-        k[4].metric("PAT Margin %", f"{to_float(doc.get('pat_margin_percent')) or 0:.2f}")
+        k[3].metric("EBITDA Margin YoY (bps)", f"{to_float(doc.get('ebitda_margin_yoy_bps')) or 0:,.0f}")
+        k[4].metric("PAT Margin YoY (bps)", f"{to_float(doc.get('pat_margin_yoy_bps')) or 0:,.0f}")
+
 
         # Helper for breakdown tables
         def cols_to_df(d: Dict[str, Any], mapping: Dict[str, str]) -> pd.DataFrame:
