@@ -86,7 +86,7 @@ def to_float(x: Any) -> Optional[float]:
     except Exception:
         return None
 def flatten_for_df(doc: Dict[str, Any]) -> Dict[str, Any]:
-    company = doc.get("company") or {}
+    company = doc.get("company") or ""
     smap = doc.get("symbol_map_raw") or {}
     return {
         "_id": doc.get("_id"),
@@ -94,9 +94,9 @@ def flatten_for_df(doc: Dict[str, Any]) -> Dict[str, Any]:
         "report_period": doc.get("report_period"),
         "basis": doc.get("basis"),
         "company_name": doc.get("company_name"),
-        "nse": company.get("nse") or smap.get("NSE"),
-        "bse": company.get("bse") or smap.get("BSE"),
-        "isin": company.get("isin") or smap.get("company"),
+        "nse": smap.get("NSE"),
+        "bse": smap.get("BSE"),
+        "isin": company,
         "expected_sales": to_float(doc.get("expected_sales")),
         "expected_ebitda": to_float(doc.get("expected_ebitda")),
         "expected_pat": to_float(doc.get("expected_pat")),
