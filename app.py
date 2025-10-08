@@ -93,7 +93,7 @@ def flatten_for_df(doc: Dict[str, Any]) -> Dict[str, Any]:
         "broker_name": doc.get("broker_name"),
         "report_period": doc.get("report_period"),
         "basis": doc.get("basis"),
-        "company_name": company.get("name") or doc.get("company_name"),
+        "company_name": doc.get("company_name"),
         "nse": company.get("nse") or smap.get("NSE"),
         "bse": company.get("bse") or smap.get("BSE"),
         "isin": company.get("isin") or smap.get("company"),
