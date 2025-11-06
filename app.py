@@ -412,11 +412,11 @@ if not view.empty:
             for label, key in mapping.items():
                 dct = d.get(key) or {}
                 if isinstance(dct, dict) and dct:
-                    rows_.append({"Metric": label, "1Q": to_float(dct.get("1Q")), "1QE": to_float(dct.get("1QE"))})
-            return pd.DataFrame(rows_) if rows_ else pd.DataFrame(columns=["Metric", "1Q", "1QE"])
+                    rows_.append({"Metric": label, "2Q": to_float(dct.get("2Q")), "2QE": to_float(dct.get("2QE"))})
+            return pd.DataFrame(rows_) if rows_ else pd.DataFrame(columns=["Metric", "2Q", "2QE"])
 
         # Breakdowns
-        st.markdown('<div class="section-h">1Q vs 1QE — Sales / EBITDA / PAT</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-h">2Q vs 2QE — Sales / EBITDA / PAT</div>', unsafe_allow_html=True)
         df_main = cols_to_df(doc, {
             "Sales": "expected_sales_cols",
             "EBITDA": "expected_ebitda_cols",
@@ -427,7 +427,7 @@ if not view.empty:
         else:
             st.caption("No Sales/EBITDA/PAT breakdown found.", help="expected_*_cols missing")
 
-        st.markdown('<div class="section-h">1Q vs 1QE — Margins</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-h">2Q vs 2QE — Margins</div>', unsafe_allow_html=True)
         df_m = cols_to_df(doc, {
             "EBITDA Margin %": "ebitda_margin_percent_cols",
             "PAT Margin %": "pat_margin_percent_cols",
