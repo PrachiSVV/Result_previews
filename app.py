@@ -131,10 +131,10 @@ def build_dataframe(docs: List[Dict[str, Any]]) -> pd.DataFrame:
 #         "broker_name": doc.get("broker_name"),
 #         "report_period": doc.get("report_period"),
 #         "basis": doc.get("basis"),
-#         "company_name": company.get("name") or doc.get("company_name"),
-#         "nse": company.get("nse") or smap.get("NSE"),
-#         "bse": company.get("bse") or smap.get("BSE"),
-#         "isin": company.get("isin") or smap.get("company"),
+#         "company_name": smap.get("name") or doc.get("company_name"),
+#         "nse": smap.get("nse") or smap.get("NSE"),
+#         "bse": smap.get("bse") or smap.get("BSE"),
+#         "isin": smap.get("isin") or company,
 #         "expected_sales": to_float(doc.get("expected_sales")),
 #         "expected_ebitda": to_float(doc.get("expected_ebitda")),
 #         "expected_pat": to_float(doc.get("expected_pat")),
@@ -388,10 +388,10 @@ if not view.empty:
         co = doc.get("company") or {}
         sm = doc.get("symbol_map_raw") or {}
         cc1, cc2, cc3, cc4 = st.columns(4)
-        cc1.markdown(f'<div class="company-text"><p><b>{co.get("name") or doc.get("company_name","-")}</b></p></div>', unsafe_allow_html=True)
-        cc2.markdown(f'<div class="company-text"><p>NSE: {co.get("nse") or sm.get("NSE","-")}</p></div>', unsafe_allow_html=True)
-        cc3.markdown(f'<div class="company-text"><p>BSE: {co.get("bse") or sm.get("BSE","-")}</p></div>', unsafe_allow_html=True)
-        cc4.markdown(f'<div class="company-text"><p>ISIN: {co.get("isin") or sm.get("company","-")}</p></div>', unsafe_allow_html=True)
+        cc1.markdown(f'<div class="company-text"><p><b>{sm.get("name") or doc.get("company_name","-")}</b></p></div>', unsafe_allow_html=True)
+        cc2.markdown(f'<div class="company-text"><p>NSE: {sm.get("nse") or sm.get("NSE","-")}</p></div>', unsafe_allow_html=True)
+        cc3.markdown(f'<div class="company-text"><p>BSE: {sm.get("bse") or sm.get("BSE","-")}</p></div>', unsafe_allow_html=True)
+        cc4.markdown(f'<div class="company-text"><p>ISIN: {sm.get("isin") or sm.get("company","-")}</p></div>', unsafe_allow_html=True)
 
         # Compact KPIs
         st.markdown('<div class="section-h">Key Figures</div>', unsafe_allow_html=True)
